@@ -17,11 +17,8 @@ function drawGrid(n) {
 	$("body").children("div").remove();
 
 	for (i = 0; i < n * n; i++) {
-		var square = new Object();
-		square.div = $("<div class='square'></div>");
-		square.color = "rgb(255, 255, 255)";
-		square.wasHovered = false;
-		square.div.insertAfter($("button"));
+		var div = $("<div class='square' data-hovered='false'></div>")
+		div.insertAfter($("button"));
 	}
 
 	var squares = $("body").children("div");
@@ -30,10 +27,27 @@ function drawGrid(n) {
 	$(squares).on({
     mouseenter: function() {
 
-    	if(!$(this).hasClass('transition'))
-     		$(this).addClass('transition');
+    	// First time the div is hovered, set it's color to random
+    	if($(this).data('hovered') === false) {
 
-      $(this).css("background-color", getRandomRGB);
+     		$(this).addClass('transition');
+    		$(this).data('hovered', true);
+
+     		$(this).css("background-color", getColor(null));
+    		
+    	} else 
+
+    		var colorsOnly = getColorsOnly($(this).css("background-color"));
+
+    		$(this).data("redInset", getInset(colorsOnly[0]));
+    		$(this).data("greenInset", getInset(colorsOnly[1]));
+    		$(this).data("blueInset", getInset(colorsOnly[2]));
+
+    		console.log($(this).data("redInset"));
+    		console.log($(this).data("greenInset"));
+    		console.log($(this).data("blueInset"));
+
+    		$(this).css("background-color", getColor($(this).css("background-color")));
     }
    });
 
@@ -47,19 +61,48 @@ function drawGrid(n) {
 }
 
 // Returns a random rgb color
-function getRandomRGB() {
+function getColor(prevColor) {
 
-    var red = getRandomColor() + ", ";
-    var green = getRandomColor() + ", ";
-    var blue = getRandomColor() + ")";
+		var red;
+  	var green;
+  	var blue;
 
-    var color = 'rgb(' + red + green + blue;
+		if (prevColor == null) {
+
+			red = getRandomColor() + ", ";
+			green = getRandomColor() + ", ";
+			blue = getRandomColor() + ")";
+		
+		} else {
+
+			var colorsOnly = getColorsOnly(prevColor);
+
+			var red_inset = +$(this).data('redInset');
+			var green_inset = +$(this).data('greenInset');
+			var blue_inset = +$(this).data('blueInset');
+
+
+			red = colorsOnly[0] + red_inset ;
+			green = colorsOnly[1] + green_inset;
+			blue = colorsOnly[2] + blue_inset;
+
+		}
     
+   	var color = 'rgb(' + red + green + blue;
+
     return color;
 
+}
+
+function getColorsOnly(rgb) {
+	return colorsOnly = rgb.substring(rgb.indexOf('(') + 1, rgb.lastIndexOf(')')).split(/,\s*/);
 }
 
 // Returns a random value between 0 - 255 representing a red / green / blue value for rgb
 function getRandomColor() {
 	return Math.floor(Math.random() * 256);
+}
+
+function getInset(color) {
+	return Math.floor(color / 10);
 }
