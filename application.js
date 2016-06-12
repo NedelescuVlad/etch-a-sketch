@@ -26,7 +26,7 @@ function drawGrid(n) {
 	// Calculate the width and height for a square
 	var square_width =  100 / n + "%";
 	var square_height = (+$(window).height() - (+$("button").height())) / n;
-
+	
 	// Set that width and height
 	squares.css({"width":square_width, "height":square_height});
 
@@ -88,6 +88,12 @@ function paintSquare(square, prevColor) {
 			red = colorsOnly[0] - red_inset + ", " ;
 			green = colorsOnly[1] - green_inset + ", ";
 			blue = colorsOnly[2] - blue_inset + ")";
+			if (red < 0)
+				red = 0
+			if (green < 0)
+				green = 0
+			if (blue < 0)
+				blue = 0
 
 		}
     
